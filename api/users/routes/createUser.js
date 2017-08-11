@@ -1,5 +1,6 @@
 'use strict';
 
+const debug     = require('debug')('API:Users:createUsers');
 const bcrypt    = require('bcrypt');
 const Boom      = require('boom');
 const uuid      = require('uuid');
@@ -12,7 +13,10 @@ module.exports = function (request, reply) {
 
     // hashing password with salt at level 10 strength
     bcrypt.hash(payload.password, 10, function (err, hash) {
-        if (err) reply(Boom.badImplementation());
+        if (err) {
+            debug('hashing password error:', JSON,stringify(err, null, 2));
+            reply(Boom.badImplementation());
+        }
 
         // add new user into dynamodb...
         AWS.config.update(awsConfig);
@@ -25,7 +29,7 @@ module.exports = function (request, reply) {
             email: payload.email,
             admin: false
         });
-
+ 
         const params = {
             TableName: 'Users',
             Item: newUser
@@ -33,10 +37,10 @@ module.exports = function (request, reply) {
         
         docClient.put(params, function (err, data) {
             if (err) {
-                console.log('Add user error:', JSON.stringify(err, null, 2));
+                debug('adding user error:', JSON.stringify(err, null, 2));
                 reply(Boom.badImplementation());
             } else {
-                console.log('Added user success!!');
+                debug('Added user success!!');
                 reply(newUser);
             }
         });

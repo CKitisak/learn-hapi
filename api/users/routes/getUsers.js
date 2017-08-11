@@ -1,5 +1,6 @@
 'use strict';
 
+const debug     = require('debug')('API:Users:getUsers');
 const Boom      = require('boom');
 const AWS       = require('aws-sdk');
 const awsConfig = require('../../../config/aws');
@@ -18,7 +19,8 @@ module.exports = function (request, reply) {
 
     const onScan = function (err, data) {
         if (err) {
-            console.error('Unable to scan the table. Error JSON:', JSON.stringify(err, null, 2));
+            debug('scanning user error:', JSON.stringify(err, null, 2));
+            reply(Boom.badImplementation());
         } else {
             data.Items.forEach(function(user) {
                 users.push(user);
@@ -27,14 +29,14 @@ module.exports = function (request, reply) {
             // continue scanning if we have more movies, because
             // scan can retrieve a maximum of 1MB of data
             if (typeof data.LastEvaluatedKey != 'undefined') {
-                console.log('Scanning for more...');
                 params.ExclusiveStartKey = data.LastEvaluatedKey;
                 docClient.scan(params, onScan);
             } else {
                 reply(users);
             }
         }
-    }
+    };
 
+    // start scanning...
     docClient.scan(params, onScan);
 };

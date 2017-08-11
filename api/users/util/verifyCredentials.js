@@ -1,5 +1,6 @@
 'use strict';
 
+const debug     = require('debug')('API:Users:verifyCredentials');
 const bcrypt    = require('bcrypt');
 const Boom      = require('boom');
 const AWS       = require('aws-sdk');
@@ -20,19 +21,18 @@ function verifyCredentials(request, reply) {
 
     const onScan = function (err, data) {
         if (err) {
-            console.log('verify credentials error:', JSON.stringify(err, null, 2));
+            debug('verify credentials error:', JSON.stringify(err, null, 2));
             reply(Boom.badImplementation());
         } else {
             if (data.Count === 1) {
                 const user = data.Items[0];
                 bcrypt.compare(request.payload.password, user.password, function (err, result) {
                     if (err) {
-                        console.log('validation password error:', JSON.stringify(err, null, 2));
+                        debug('validation password error:', JSON.stringify(err, null, 2));
                         reply(Boom.badImplementation());
                     }
 
-                    console.log(result)
-                    // user's password matched!
+                    // user's password matches!
                     if (result === true) {
                         reply(user);
                     } else {
