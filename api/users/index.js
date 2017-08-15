@@ -4,6 +4,8 @@ const createUser        = require('./routes/createUser');
 const createUserSchema  = require('./schemas/createUser');
 const updateUser        = require('./routes/updateUser');
 const updateUserSchema  = require('./schemas/updateUser');
+const deleteUser        = require('./routes/deleteUser');
+const deleteUserSchema  = require('./schemas/deleteUser');
 const login             = require('./routes/login');
 const loginSchema       = require('./schemas/login');
 const logout            = require('./routes/logout');
@@ -53,6 +55,17 @@ exports.register = function (server, options, next) {
                     // Validate the payload and params
                     params: updateUserSchema.paramsSchema,
                     payload: updateUserSchema.payloadSchema
+                }
+            }
+        },
+        {
+            path: '/api/users/{id}',
+            method: 'DELETE',
+            config: {
+                handler: deleteUser,
+                validate: {
+                    // Validate the params
+                    params: deleteUserSchema 
                 }
             }
         },

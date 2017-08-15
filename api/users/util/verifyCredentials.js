@@ -30,13 +30,13 @@ function verifyCredentials(request, reply) {
                     if (err) {
                         debug('validation password error:', JSON.stringify(err, null, 2));
                         reply(Boom.badImplementation());
-                    }
-
-                    // user's password matches!
-                    if (result === true) {
-                        reply(user);
                     } else {
-                        reply(Boom.badRequest('Incorrect password!'));
+                        // user's password matches!
+                        if (result === true) {
+                            reply(user);
+                        } else {
+                            reply(Boom.badRequest('Incorrect password!'));
+                        }
                     }
                 });
             } else {

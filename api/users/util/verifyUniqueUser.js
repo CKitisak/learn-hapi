@@ -55,8 +55,7 @@ function verifyUniqueUser(request, reply) {
                         } else {
                             if (user.username === payload.username) {
                                 reply(Boom.badRequest('Username is taken already'));
-                            }
-                            if (user.email === payload.email) {
+                            } else if (user.email === payload.email) {
                                 reply(Boom.badRequest('Email is taken already'));
                             }
                         }

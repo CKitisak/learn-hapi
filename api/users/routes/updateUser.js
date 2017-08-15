@@ -48,7 +48,7 @@ module.exports = function (request, reply) {
             reply(Boom.badImplementation());
         } else {
             debug('Updated user success!!');
-            reply(data);
+            reply(data.Attributes);
         }
     });
 };
